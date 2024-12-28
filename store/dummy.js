@@ -66,15 +66,19 @@ class DummyStore {
 
     // Método asincrónico para insertar o actualizar datos
     async upsert(table, data) {
-        const collection = await this.list(table) ?? [];
+        const collection = await this.list(table) || [];
+
+        if (collection.length === 0) {
+            collection.push(data);
+            this.db[table] = [data];
+            return data;
+        }
+
         const index = collection.findIndex(item => item.id === data.id);
         if (index > -1) {
             collection[index] = data;
             return data;
         }
-        collection.push(data);
-        this.db[table] = collection;
-        return data;
     }
 
     // Método asincrónico para eliminar datos
@@ -87,6 +91,15 @@ class DummyStore {
             return true;
         }
         return false
+    }
+
+    // Método asincrónico para hacer consultas
+    async query(table, query) {
+        const collection = await this.list(table) ?? [];
+        return collection.filter(item => {
+            for (let key in query) if (item[key] !== query[key]) return [];
+            return item;
+        });
     }
 }
 
