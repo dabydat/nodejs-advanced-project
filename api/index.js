@@ -4,6 +4,7 @@ import SwaggerHelper from '../helpers/swagger.helpers.js';
 import path from 'path';
 import USER_ROUTER from './components/user/routes.js';
 import AUTH_ROUTER from './components/auth/routes.js';
+import PERMISSIONS_ROUTER from './components/permissions/routes.js';
 
 // Inicialización de Express
 const APP = express();
@@ -24,6 +25,7 @@ APP.use(express.urlencoded({ extended: true }));
 
 // Rutas de usuario
 APP.use("/api/user", USER_ROUTER);
-APP.use("/api/auth", AUTH_ROUTER)
+APP.use("/api/auth", AUTH_ROUTER);
+APP.use("/api/permissions", PERMISSIONS_ROUTER);
 
 APP.listen(API_CONFIG.PORT, () => console.log("Server is running on port " + API_CONFIG.PORT));

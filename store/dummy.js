@@ -2,7 +2,11 @@ const db = {
     'user': [
         {
             id: '1',
-            name: 'Carlos'
+            name: 'Carlos',
+            username: 'carlos',
+            permissions: {
+                'user': ['selfUpdate']
+            }
         },
         {
             id: '2',
@@ -67,15 +71,22 @@ class DummyStore {
     // Método asincrónico para insertar o actualizar datos
     async upsert(table, data) {
         const collection = await this.list(table) || [];
-
+        
         if (collection.length === 0) {
             collection.push(data);
             this.db[table] = [data];
             return data;
         }
 
-        const index = collection.findIndex(item => item.id === data.id);
-        if (index > -1) {
+        const index = collection.findIndex(item => {
+            if (table === 'permissions') return item.user_id === data.user_id;
+            return item.id === data.id;
+        });
+
+        if (index === -1) {
+            collection.push(data);
+            return collection;
+        } else {
             collection[index] = data;
             return data;
         }

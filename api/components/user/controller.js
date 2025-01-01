@@ -2,12 +2,14 @@ import DummyStore from "../../../store/dummy.js";
 import IdHelpers from "../../../helpers/id.helpers.js";
 
 import authInstance from "../auth/controller.js";
+import permissionsInstance from "../permissions/controller.js";
 
 class UserController {
-    constructor(store, auth) {
+    constructor(store, auth, permissions) {
         this.TABLE = "user";
         this.store = store;
         this.auth = auth;
+        this.permissions = permissions;
     }
 
     async getAll(req, res) {
@@ -42,6 +44,8 @@ class UserController {
                     password: req.body.password
                 }
             );
+
+            await this.permissions.createPermission({ user_id: user.id });
         }
 
         await this.store.upsert(this.TABLE, user);
@@ -58,7 +62,7 @@ class UserController {
 // Creación de una instancia de DummyStore
 const store = new DummyStore();
 // Creación de una instancia de User utilizando la inyección de dependencias
-const userInstance = new UserController(store, authInstance);
+const userInstance = new UserController(store, authInstance, permissionsInstance);
 
 // Ahora puedes exportar userInstance o la clase User para usarla en otras partes de tu aplicación
 export default userInstance;

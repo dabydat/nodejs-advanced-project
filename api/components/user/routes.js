@@ -1,5 +1,7 @@
 import express from "express";
 
+import authMiddlewareInstance from "./middleware.js";
+
 import RESPONSE from "../../../network/response.js";
 import userInstance from "./controller.js";
 
@@ -23,9 +25,19 @@ USER_ROUTER.get("/:id", async (req, res) => {
     }
 });
 
-USER_ROUTER.post("/", (req, res) => {
+USER_ROUTER.post("/", async (req, res) => {
     try {
-        const user = userInstance.create(req, res);
+        const user = await userInstance.create(req, res);        
+        RESPONSE.success(req, res, user, 201);
+    } catch (error) {
+        RESPONSE.error(req, res, error.message, 500);
+    }
+
+});
+
+USER_ROUTER.put("/", authMiddlewareInstance.checkAuth(), async (req, res) => {
+    try {
+        const user = await userInstance.create(req, res);
         RESPONSE.success(req, res, user, 201);
     } catch (error) {
         RESPONSE.error(req, res, error.message, 500);

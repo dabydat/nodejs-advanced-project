@@ -14,4 +14,13 @@ AUTH_ROUTER.post("/login", async (req, res) => {
     }
 });
 
+AUTH_ROUTER.get("/", async (req, res) => {
+    try {
+        const user = await authInstance.getAll();
+        RESPONSE.success(req, res, user, 200);
+    } catch (error) {
+        RESPONSE.error(req, res, "Invalid username or password", 400);
+    }
+});
+
 export default AUTH_ROUTER;
