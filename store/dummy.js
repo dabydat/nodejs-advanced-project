@@ -3,10 +3,7 @@ const db = {
         {
             id: '1',
             name: 'Carlos',
-            username: 'carlos',
-            permissions: {
-                'user': ['selfUpdate']
-            }
+            username: 'carlos'
         },
         {
             id: '2',

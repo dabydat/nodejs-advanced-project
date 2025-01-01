@@ -16,7 +16,7 @@ class AuthMiddleware {
                     try {
                         const decoded = this.jwt.verify(token, JWT_CONFIG.SECRET);
                         req.user = decoded;
-                        const userHasPermission = await this.checkAction(decoded, "selfUpdate");
+                        const userHasPermission = await this.checkAction(req, decoded, "selfUpdate");
                         if (userHasPermission) return next();
                         else return res.status(403).send({ message: "You don't have permission" });
                     } catch (error) {
@@ -28,11 +28,10 @@ class AuthMiddleware {
         }
     }
 
-    async checkAction(user, action) {
-        const permission = {
-            user_id: user.id,
-            permission: action
-        };
+    async checkAction(req, user, action) {
+
+        const permission = { user_id: user.id, permission: action };
+        if (action === "selfUpdate" && req.body.id !== user.id) return false;
         const hasPermission = await this.permissions.verifyPermission(permission);
         if (hasPermission) return true;
         else return false;
